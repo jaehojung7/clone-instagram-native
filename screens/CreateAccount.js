@@ -1,78 +1,75 @@
-import React, { useRef } from "react";
-import { KeyboardAvoidingView, Platform, TextInput } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
 import AuthButton from "../components/auth/AuthButton";
 import AuthLayout from "../components/auth/AuthLayout";
+import { TextInput } from "../components/auth/AuthShared";
 
 export default function CreateAccount() {
+  const { register, handleSubmit, setValue } = useForm();
   const lastNameRef = useRef();
-  const userNameRef = useRef();
+  const usernameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
 
   const onNext = (nextOne) => {
     nextOne?.current?.focus();
   };
-
-  const onDone = () => {
-    alert("done!");
+  const onValid = (data) => {
+    console.log(data);
   };
 
+  useEffect(() => {
+    register("firstName");
+    register("lastName");
+    register("username");
+    register("email");
+    register("password");
+  }, [register]);
   return (
     <AuthLayout>
-      <KeyboardAvoidingView
-        style={{
-          width: "100%",
-        }}
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 30 : 0}
-      >
-        <TextInput
-          placeholder="First Name"
-          placeholderTextColor="gray"
-          returnKeyType="next"
-          style={{ backgroundColor: "white", width: "100%" }}
-          onSubmitEditing={() => onNext(lastNameRef)}
-        />
-        <TextInput
-          ref={lastNameRef}
-          placeholder="Last Name"
-          placeholderTextColor="gray"
-          returnKeyType="next"
-          style={{ backgroundColor: "white", width: "100%" }}
-          onSubmitEditing={() => onNext(userNameRef)}
-        />
-        <TextInput
-          ref={userNameRef}
-          placeholder="Username"
-          placeholderTextColor="gray"
-          returnKeyType="next"
-          style={{ backgroundColor: "white", width: "100%" }}
-          onSubmitEditing={() => onNext(emailRef)}
-        />
-        <TextInput
-          ref={emailRef}
-          placeholder="Email"
-          placeholderTextColor="gray"
-          keyboardType="email-address"
-          returnKeyType="next"
-          style={{ backgroundColor: "white", width: "100%" }}
-          onSubmitEditing={() => onNext(passwordRef)}
-        />
-        <TextInput
-          ref={passwordRef}
-          placeholder="Password"
-          placeholderTextColor="gray"
-          returnKeyType="done"
-          secureTextEntry
-          style={{ backgroundColor: "white", width: "100%" }}
-          onSubmitEditing={onDone}
-        />
-        <AuthButton
-          text="Create Account"
-          disbaled={false}
-          onPress={() => null}
-        />
-      </KeyboardAvoidingView>
+      <TextInput
+        placeholder="First Name"
+        returnKeyType="next"
+        onSubmitEditing={() => onNext(lastNameRef)}
+        onChangeText={(text) => setValue("firstName", text)}
+      />
+      <TextInput
+        ref={lastNameRef}
+        placeholder="Last Name"
+        returnKeyType="next"
+        onSubmitEditing={() => onNext(usernameRef)}
+        onChangeText={(text) => setValue("lastName", text)}
+      />
+      <TextInput
+        ref={usernameRef}
+        placeholder="Username"
+        autoCapitalize="none"
+        returnKeyType="next"
+        onSubmitEditing={() => onNext(emailRef)}
+        onChangeText={(text) => setValue("email", text)}
+      />
+      <TextInput
+        ref={emailRef}
+        placeholder="Email"
+        keyboardType="email-address"
+        returnKeyType="next"
+        onSubmitEditing={() => onNext(passwordRef)}
+        onChangeText={(text) => setValue("username", text)}
+      />
+      <TextInput
+        ref={passwordRef}
+        placeholder="Password"
+        secureTextEntry
+        returnKeyType="done"
+        lastOne={true}
+        onChangeText={(text) => setValue("password", text)}
+        onPress={handleSubmit(onValid)}
+      />
+      <AuthButton
+        text="Create Account"
+        disabled={true}
+        onPress={handleSubmit(onValid)}
+      />
     </AuthLayout>
   );
 }
